@@ -7,6 +7,7 @@
 
 [node name="Player" parent="." unique_id=1791417171 instance=ExtResource("1_e2o6t")]
 position = Vector2(390, 151)
+JUMP_VELOCITY = -600.0
 
 [node name="Platform" parent="." unique_id=794616474 instance=ExtResource("2_feb5d")]
 position = Vector2(390, 549)
