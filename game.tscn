@@ -1,13 +1,111 @@
 [gd_scene format=3 uid="uid://cmc6ug6ba38jx"]
 
 [ext_resource type="PackedScene" uid="uid://dgpml3whgjedp" path="res://player.tscn" id="1_e2o6t"]
+[ext_resource type="Script" uid="uid://d20727wyc7ggr" path="res://game.gd" id="1_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://n7qjha4mn2rv" path="res://platform.tscn" id="2_feb5d"]
+[ext_resource type="Texture2D" uid="uid://bg7pb5yrqmt1x" path="res://icon.svg" id="3_feb5d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2m5ic"]
+size = Vector2(128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_harn2"]
+size = Vector2(128, 128)
+
+[sub_resource type="Gradient" id="Gradient_feb5d"]
+offsets = PackedFloat32Array(0.0011737089, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5p3sk"]
+gradient = SubResource("Gradient_feb5d")
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0, 0.0109756095)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_2m5ic"]
 
 [node name="Game" type="Node2D" unique_id=331450238]
+script = ExtResource("1_fc0e3")
 
 [node name="Player" parent="." unique_id=1791417171 instance=ExtResource("1_e2o6t")]
 position = Vector2(390, 151)
+collision_layer = 3
 JUMP_VELOCITY = -600.0
 
 [node name="Platform" parent="." unique_id=794616474 instance=ExtResource("2_feb5d")]
 position = Vector2(390, 549)
+
+[node name="Platform2" parent="." unique_id=1662627688 instance=ExtResource("2_feb5d")]
+position = Vector2(593, 532)
+
+[node name="Platform3" parent="." unique_id=575922435 instance=ExtResource("2_feb5d")]
+position = Vector2(800, 515)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2147118367]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=2053706951]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WinLabel" type="Label" parent="CanvasLayer/MarginContainer" unique_id=234131673]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"AnotherLabel"
+text = "Gratulacje! Wygrywasz!"
+
+[node name="LoseLabel" type="Label" parent="CanvasLayer/MarginContainer" unique_id=1072790391]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"AnotherLabel"
+text = "PRZEGRYWASZ!"
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer" unique_id=1381060413]
+layout_mode = 2
+size_flags_vertical = 0
+text = "TEST"
+
+[node name="Target" type="Area2D" parent="." unique_id=1048887828]
+modulate = Color(1, 1, 0, 1)
+position = Vector2(795, 334)
+collision_mask = 2
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Target" unique_id=359518181]
+texture = ExtResource("3_feb5d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Target" unique_id=210310667]
+shape = SubResource("RectangleShape2D_2m5ic")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="." unique_id=1951067455]
+modulate = Color(0, 0.7019608, 1, 1)
+position = Vector2(798, 65)
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="RigidBody2D" unique_id=246696089]
+texture = ExtResource("3_feb5d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D" unique_id=943848717]
+shape = SubResource("RectangleShape2D_harn2")
+
+[node name="Killzone" type="Area2D" parent="." unique_id=816513502]
+position = Vector2(496, 651)
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Killzone" unique_id=1544665246]
+position = Vector2(-6.500004, 0)
+scale = Vector2(11.921876, 1)
+texture = SubResource("GradientTexture2D_5p3sk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=757318742]
+shape = SubResource("WorldBoundaryShape2D_2m5ic")
+
+[node name="Timer" type="Timer" parent="." unique_id=1243834534]
+wait_time = 5.0
+
+[connection signal="body_entered" from="Target" to="CanvasLayer/MarginContainer/WinLabel" method="show" unbinds=1]
+[connection signal="body_entered" from="Killzone" to="CanvasLayer/MarginContainer/LoseLabel" method="show" unbinds=1]
+[connection signal="body_entered" from="Killzone" to="Timer" method="start" unbinds=1]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
